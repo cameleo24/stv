@@ -2,7 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saint Valentin 💖</title>
+
 <style>
 body {
     margin: 0;
@@ -32,6 +34,7 @@ button {
     border-radius: 30px;
     cursor: pointer;
     position: absolute;
+    z-index: 2;
 }
 
 #yes {
@@ -50,15 +53,19 @@ button {
     display: none;
     font-size: 2em;
     margin-top: 30px;
+    z-index: 2;
+    position: relative;
 }
 
 canvas {
     position: fixed;
     top: 0;
     left: 0;
+    pointer-events: none;
 }
 </style>
 </head>
+
 <body>
 
 <h1>Veux-tu être ma Valentine ? 💖</h1>
@@ -71,33 +78,41 @@ canvas {
 <canvas id="fireworks"></canvas>
 
 <script>
-// Bouton "Non" qui fuit
+
+// Ajuste le canvas correctement
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Bouton NON qui fuit
 const noBtn = document.getElementById("no");
 
-noBtn.addEventListener("mouseover", () => {
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 50);
+noBtn.addEventListener("mouseenter", () => {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 80);
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 });
 
-// Feux d'artifice
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
+// Feux d’artifice
 let particles = [];
 
 function createFirework(x, y) {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 80; i++) {
         particles.push({
             x: x,
             y: y,
             radius: 2,
             color: `hsl(${Math.random()*360}, 100%, 50%)`,
-            speedX: (Math.random() - 0.5) * 8,
-            speedY: (Math.random() - 0.5) * 8,
+            speedX: (Math.random() - 0.5) * 6,
+            speedY: (Math.random() - 0.5) * 6,
             alpha: 1
         });
     }
@@ -110,7 +125,7 @@ function animate() {
     particles.forEach((p, i) => {
         p.x += p.speedX;
         p.y += p.speedY;
-        p.alpha -= 0.01;
+        p.alpha -= 0.015;
 
         ctx.globalAlpha = p.alpha;
         ctx.beginPath();
@@ -122,17 +137,24 @@ function animate() {
             particles.splice(i,1);
         }
     });
+
+    ctx.globalAlpha = 1;
 }
 
 animate();
 
-// Bouton Oui
+// Bouton OUI
 document.getElementById("yes").addEventListener("click", () => {
     document.getElementById("message").style.display = "block";
-    for(let i=0;i<5;i++){
-        createFirework(Math.random()*canvas.width, Math.random()*canvas.height/2);
+
+    for(let i = 0; i < 6; i++) {
+        createFirework(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height / 2
+        );
     }
 });
+
 </script>
 
 </body>
