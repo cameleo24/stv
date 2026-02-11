@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Saint Valentin 💖</title>
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff6ec4, #ff1493);
+    text-align: center;
+    color: white;
+}
+
+h1 {
+    margin-top: 100px;
+    font-size: 3em;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    position: absolute;
+}
+
+#yes {
+    left: 40%;
+    top: 60%;
+    background-color: #00ff88;
+}
+
+#no {
+    left: 55%;
+    top: 60%;
+    background-color: #ff0033;
+}
+
+#message {
+    display: none;
+    font-size: 2em;
+    margin-top: 30px;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Veux-tu être ma Valentine ? 💖</h1>
+
+<button id="yes">Oui 💕</button>
+<button id="no">Non ❌</button>
+
+<div id="message">FÉLICITATIONS 🎉💖</div>
+
+<canvas id="fireworks"></canvas>
+
+<script>
+// Bouton "Non" qui fuit
+const noBtn = document.getElementById("no");
+
+noBtn.addEventListener("mouseover", () => {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 50);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+});
+
+// Feux d'artifice
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function createFirework(x, y) {
+    for (let i = 0; i < 100; i++) {
+        particles.push({
+            x: x,
+            y: y,
+            radius: 2,
+            color: `hsl(${Math.random()*360}, 100%, 50%)`,
+            speedX: (Math.random() - 0.5) * 8,
+            speedY: (Math.random() - 0.5) * 8,
+            alpha: 1
+        });
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach((p, i) => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.alpha -= 0.01;
+
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+
+        if (p.alpha <= 0) {
+            particles.splice(i,1);
+        }
+    });
+}
+
+animate();
+
+// Bouton Oui
+document.getElementById("yes").addEventListener("click", () => {
+    document.getElementById("message").style.display = "block";
+    for(let i=0;i<5;i++){
+        createFirework(Math.random()*canvas.width, Math.random()*canvas.height/2);
+    }
+});
+</script>
+
+</body>
+</html>
